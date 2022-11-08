@@ -3,6 +3,7 @@ package com.chaapaar.demo.service;
 import com.chaapaar.demo.exception.BadRequestException;
 import com.chaapaar.demo.exception.NotFoundException;
 import com.chaapaar.demo.model.Product;
+import com.chaapaar.demo.payload.request.EditProductRequest;
 import com.chaapaar.demo.payload.request.ProductRequest;
 import com.chaapaar.demo.payload.response.ProductResponse;
 import com.chaapaar.demo.repository.ProductRepository;
@@ -20,6 +21,18 @@ public class ProductService {
         Product product = new Product();
         product.setName(request.getName());
         product.setPrice(request.getPrice());
+        productRepository.saveAndFlush(product);
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
+    }
+    public ProductResponse update(Long id, EditProductRequest request){
+        Product product = productRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException(String.format("Product with id %d not found",id)));
+        if(request.getName() != null) product.setName(request.getName());
+        if(request.getPrice() != null) product.setPrice(request.getPrice());
         productRepository.saveAndFlush(product);
         return ProductResponse.builder()
                 .id(product.getId())

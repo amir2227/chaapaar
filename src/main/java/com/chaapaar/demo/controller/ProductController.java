@@ -1,6 +1,7 @@
 package com.chaapaar.demo.controller;
 
 import com.chaapaar.demo.exception.HandleValidationExceptions;
+import com.chaapaar.demo.payload.request.EditProductRequest;
 import com.chaapaar.demo.payload.request.ProductRequest;
 import com.chaapaar.demo.payload.response.ProductResponse;
 import com.chaapaar.demo.service.ProductService;
@@ -31,5 +32,13 @@ public class ProductController extends HandleValidationExceptions {
     @GetMapping(path = "{id}")
     public ResponseEntity<ProductResponse> get(@PathVariable("id") Long id){
         return ResponseEntity.ok(productService.get(id));
+    }
+    @PatchMapping(path = "{id}")
+    public ResponseEntity<ProductResponse> edit(@PathVariable("id") Long id, @RequestBody EditProductRequest request){
+        return ResponseEntity.ok(productService.update(id,request));
+    }
+    @DeleteMapping(path = "{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") Long id){
+        return ResponseEntity.ok(productService.delete(id));
     }
 }
