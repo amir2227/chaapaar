@@ -18,7 +18,8 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(length = 128)
+    @Column(length = 100,nullable = false)
     private String name;
-    private Float price;
+    @Column(nullable = false)
+    private Double price;
 }

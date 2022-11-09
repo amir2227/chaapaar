@@ -8,5 +8,5 @@ import lombok.Data;
 public class ProductResponse {
     private Long id;
     private String name;
-    private Float price;
+    private Double price;
 }

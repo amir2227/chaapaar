@@ -14,9 +14,9 @@ import javax.validation.constraints.Size;
 @Getter
 public class ProductRequest {
     @NotNull
-    @Size(min = 3,max = 128)
+    @Size(min = 3,max = 100)
     private String name;
     @NotNull
     @Min(value = 0)
-    private  Float price;
+    private  Double price;
 }
