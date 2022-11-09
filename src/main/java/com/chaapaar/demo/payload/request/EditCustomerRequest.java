@@ -3,6 +3,7 @@ package com.chaapaar.demo.payload.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Email;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class EditCustomerRequest {
     @Nullable
     @Size(min = 3,max = 100)

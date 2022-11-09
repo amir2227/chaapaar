@@ -7,6 +7,7 @@ import com.chaapaar.demo.payload.request.EditProductRequest;
 import com.chaapaar.demo.payload.request.ProductRequest;
 import com.chaapaar.demo.payload.response.ProductResponse;
 import com.chaapaar.demo.repository.ProductRepository;
+import com.chaapaar.demo.utils.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,31 +23,18 @@ public class ProductService {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         productRepository.saveAndFlush(product);
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .build();
+        return EntityMapper.mapToDto(product);
     }
     public ProductResponse update(Long id, EditProductRequest request){
         Product product = this.getEntity(id);
         if(request.getName() != null) product.setName(request.getName());
         if(request.getPrice() != null) product.setPrice(request.getPrice());
         productRepository.saveAndFlush(product);
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .build();
+        return EntityMapper.mapToDto(product);
     }
     public List<ProductResponse> getAll(){
         List<Product> products = productRepository.findAll();
-        return products.stream().map(product ->
-            ProductResponse.builder()
-                .name(product.getName())
-                .id(product.getId())
-                .price(product.getPrice()).build()
-        ).toList();
+        return products.stream().map(EntityMapper::mapToDto).toList();
     }
     public Product getEntity(Long id){
         return productRepository.findById(id)
@@ -54,11 +42,7 @@ public class ProductService {
     }
     public ProductResponse get(Long id){
         Product product = this.getEntity(id);
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .build();
+        return EntityMapper.mapToDto(product);
     }
     public String delete(Long id){
         // is present check

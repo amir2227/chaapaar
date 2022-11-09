@@ -12,6 +12,7 @@ import com.chaapaar.demo.payload.response.OrderResponse;
 import com.chaapaar.demo.payload.response.OrderResponseList;
 import com.chaapaar.demo.payload.response.ProductResponse;
 import com.chaapaar.demo.repository.OrderRepository;
+import com.chaapaar.demo.utils.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,26 +40,12 @@ public class OrderService {
            totalPrice += product.getPrice() * orderRequest.getCount();
            Order order = new Order(null,orderRequest.getCount(),customer,product);
            orderRepository.saveAndFlush(order);
-           OrderResponse orderResponse = OrderResponse.builder()
-                   .count(orderRequest.getCount())
-                   .product(ProductResponse.builder()
-                           .id(product.getId())
-                           .name(product.getName())
-                           .price(product.getPrice())
-                           .build())
-                   .id(order.getId())
-                   .build();
-           orderResponses.add(orderResponse);
+           orderResponses.add(EntityMapper.mapToDto(order));
         }
         return OrderResponseList.builder()
                 .orders(orderResponses)
                 .totalPrice(Double.valueOf(df.format(totalPrice)))
-                .customer(CustomerResponse.builder()
-                        .email(customer.getEmail())
-                        .description(customer.getDescription())
-                        .firstName(customer.getFirstName())
-                        .lastName(customer.getLastName())
-                        .build())
+                .customer(EntityMapper.mapToDto(customer))
                 .build();
     }
     public Order getEntity(Long id){
@@ -67,15 +54,7 @@ public class OrderService {
     }
     public OrderResponse get(Long id){
         Order order = this.getEntity(id);
-        return OrderResponse.builder()
-                .id(order.getId())
-                .count(order.getCount())
-                .product(ProductResponse.builder()
-                        .id(order.getProduct().getId())
-                        .name(order.getProduct().getName())
-                        .price(order.getProduct().getPrice())
-                        .build())
-                .build();
+        return EntityMapper.mapToDto(order);
     }
     public OrderResponse update(Long id,Long customerId, EditOrderRequest request){
         Order order = this.getEntity(id);
@@ -88,15 +67,7 @@ public class OrderService {
             order.setProduct(product);
         }
         orderRepository.saveAndFlush(order);
-        return OrderResponse.builder()
-                .id(order.getId())
-                .product(ProductResponse.builder()
-                        .id(order.getProduct().getId())
-                        .name(order.getProduct().getName())
-                        .price(order.getProduct().getPrice())
-                .build())
-                .count(order.getCount())
-                .build();
+        return EntityMapper.mapToDto(order);
     }
     public OrderResponseList getCustomerOrders(Long customerId){
         CustomerResponse customerResponse = customerService.get(customerId);
@@ -104,19 +75,9 @@ public class OrderService {
         List<OrderResponse> orderResponses = new ArrayList<>();
         Double totalPrice = 0d;
         for(Order order : orders){
-          OrderResponse orderResponse = OrderResponse.builder()
-                    .id(order.getId())
-                    .count(order.getCount())
-                    .product(ProductResponse.builder()
-                            .id(order.getProduct().getId())
-                            .name(order.getProduct().getName())
-                            .price(order.getProduct().getPrice())
-                            .build())
-                    .build();
-          orderResponses.add(orderResponse);
+          orderResponses.add(EntityMapper.mapToDto(order));
           totalPrice += order.getCount() * order.getProduct().getPrice();
         }
-
         return OrderResponseList.builder()
                 .customer(customerResponse)
                 .totalPrice(Double.valueOf(df.format(totalPrice)))

@@ -7,13 +7,16 @@ import com.chaapaar.demo.payload.request.EditCustomerRequest;
 import com.chaapaar.demo.payload.request.CustomerRequest;
 import com.chaapaar.demo.payload.response.CustomerResponse;
 import com.chaapaar.demo.repository.CustomerRepository;
+import com.chaapaar.demo.utils.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomerService {
     private final CustomerRepository customerRepository;
 
@@ -24,13 +27,7 @@ public class CustomerService {
         customer.setDescription(request.getDescription());
         customer.setEmail(request.getEmail());
         customerRepository.saveAndFlush(customer);
-        return CustomerResponse.builder()
-                .id(customer.getId())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .description(customer.getDescription())
-                .email(customer.getEmail())
-                .build();
+        return EntityMapper.mapToDto(customer);
     }
     public CustomerResponse update(Long id, EditCustomerRequest request){
         Customer customer = this.getEntity(id);
@@ -39,39 +36,23 @@ public class CustomerService {
         if(request.getDescription() != null) customer.setDescription(request.getDescription());
         if(request.getEmail() != null) customer.setEmail(request.getEmail());
         customerRepository.saveAndFlush(customer);
-        return CustomerResponse.builder()
-                .id(customer.getId())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .description(customer.getDescription())
-                .email(customer.getEmail())
-                .build();
+        return EntityMapper.mapToDto(customer);
     }
+    @Transactional(readOnly = true)
     public List<CustomerResponse> getAll(){
         List<Customer> customers = customerRepository.findAll();
-        return customers.stream().map(customer ->
-                CustomerResponse.builder()
-                        .id(customer.getId())
-                        .firstName(customer.getFirstName())
-                        .lastName(customer.getLastName())
-                        .description(customer.getDescription())
-                        .email(customer.getEmail())
-                        .build()
-                ).toList();
+        return customers.stream().map(EntityMapper::mapToDto
+        ).toList();
     }
+    @Transactional(readOnly = true)
     public Customer getEntity(Long id){
         return customerRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException(String.format("Customer with id %d not found",id)));
     }
+    @Transactional(readOnly = true)
     public CustomerResponse get(Long id){
         Customer customer = this.getEntity(id);
-        return CustomerResponse.builder()
-                .id(customer.getId())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .description(customer.getDescription())
-                .email(customer.getEmail())
-                .build();
+        return EntityMapper.mapToDto(customer);
     }
     public String delete(Long id){
         // is present check
@@ -83,4 +64,5 @@ public class CustomerService {
         }
         return String.format("Customer with id %d successfully deleted.", id);
     }
+
 }
