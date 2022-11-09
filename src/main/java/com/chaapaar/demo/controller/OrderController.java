@@ -23,7 +23,7 @@ public class OrderController extends HandleValidationExceptions {
     @PostMapping(path = "{customerId}")
     public ResponseEntity<OrderResponseList> create(@PathVariable("customerId") Long customerId, @Valid @RequestBody List<OrderRequest> request){
         OrderResponseList response = orderService.createOrder(request,customerId);
-        URI uri = URI.create("/api/v1/order/{customerId}");
+        URI uri = URI.create("/api/v1/order");
         return ResponseEntity.created(uri).body(response);
     }
     @GetMapping(path = "{customerId}/all")

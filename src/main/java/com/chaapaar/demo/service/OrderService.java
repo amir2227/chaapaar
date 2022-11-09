@@ -15,6 +15,7 @@ import com.chaapaar.demo.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,10 @@ public class OrderService {
     private final CustomerService customerService;
     private final ProductService productService;
 
+    private static final DecimalFormat df = new DecimalFormat("0.000");
+
     public OrderResponseList createOrder(List<OrderRequest> request, Long customerId){
+        if(request.isEmpty()) throw new BadRequestException("order list is empty");
         List<OrderResponse> orderResponses = new ArrayList<>();
         Double totalPrice = 0d;
         // check customer
@@ -48,7 +52,7 @@ public class OrderService {
         }
         return OrderResponseList.builder()
                 .orders(orderResponses)
-                .totalPrice(totalPrice)
+                .totalPrice(Double.valueOf(df.format(totalPrice)))
                 .customer(CustomerResponse.builder()
                         .email(customer.getEmail())
                         .description(customer.getDescription())
@@ -98,7 +102,7 @@ public class OrderService {
         CustomerResponse customerResponse = customerService.get(customerId);
         List<Order> orders = orderRepository.findByCustomer_id(customerId);
         List<OrderResponse> orderResponses = new ArrayList<>();
-        double totalPrice = 0d;
+        Double totalPrice = 0d;
         for(Order order : orders){
           OrderResponse orderResponse = OrderResponse.builder()
                     .id(order.getId())
@@ -115,7 +119,7 @@ public class OrderService {
 
         return OrderResponseList.builder()
                 .customer(customerResponse)
-                .totalPrice(totalPrice)
+                .totalPrice(Double.valueOf(df.format(totalPrice)))
                 .orders(orderResponses)
                 .build();
     }
