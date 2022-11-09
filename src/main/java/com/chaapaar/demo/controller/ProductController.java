@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -17,12 +18,12 @@ import java.util.List;
 @RequestMapping("/api/v1/product")
 @RequiredArgsConstructor
 public class ProductController extends HandleValidationExceptions {
-    private ProductService productService;
+    private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest request){
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request){
         ProductResponse response = productService.createProduct(request);
-        URI uri = URI.create("/api/v1/produc");
+        URI uri = URI.create("/api/v1/product");
         return ResponseEntity.created(uri).body(response);
     }
     @GetMapping
@@ -34,7 +35,7 @@ public class ProductController extends HandleValidationExceptions {
         return ResponseEntity.ok(productService.get(id));
     }
     @PatchMapping(path = "{id}")
-    public ResponseEntity<ProductResponse> edit(@PathVariable("id") Long id, @RequestBody EditProductRequest request){
+    public ResponseEntity<ProductResponse> edit(@PathVariable("id") Long id,@Valid @RequestBody EditProductRequest request){
         return ResponseEntity.ok(productService.update(id,request));
     }
     @DeleteMapping(path = "{id}")
