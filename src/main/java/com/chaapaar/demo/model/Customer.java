@@ -26,4 +26,5 @@ public class Customer {
     private String description;
     @Column(length = 100, nullable = false)
     private String email;
+
 }
