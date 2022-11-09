@@ -33,8 +33,7 @@ public class CustomerService {
                 .build();
     }
     public CustomerResponse update(Long id, EditCustomerRequest request){
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException(String.format("Customer with id %d not found",id)));
+        Customer customer = this.getEntity(id);
         if(request.getFirstName() != null) customer.setFirstName(request.getFirstName());
         if(request.getLastName() != null) customer.setLastName(request.getLastName());
         if(request.getDescription() != null) customer.setDescription(request.getDescription());
@@ -60,9 +59,12 @@ public class CustomerService {
                         .build()
                 ).toList();
     }
-    public CustomerResponse get(Long id){
-        Customer customer = customerRepository.findById(id)
+    public Customer getEntity(Long id){
+        return customerRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException(String.format("Customer with id %d not found",id)));
+    }
+    public CustomerResponse get(Long id){
+        Customer customer = this.getEntity(id);
         return CustomerResponse.builder()
                 .id(customer.getId())
                 .firstName(customer.getFirstName())

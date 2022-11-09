@@ -11,9 +11,6 @@ import javax.validation.constraints.*;
 public class OrderRequest {
     @NotNull
     @Min(value = 1)
-    private Long customerId;
-    @NotNull
-    @Min(value = 1)
     private Long productId;
     @NotNull
     @Min(value = 1)

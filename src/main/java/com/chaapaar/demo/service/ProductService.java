@@ -29,8 +29,7 @@ public class ProductService {
                 .build();
     }
     public ProductResponse update(Long id, EditProductRequest request){
-        Product product = productRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException(String.format("Product with id %d not found",id)));
+        Product product = this.getEntity(id);
         if(request.getName() != null) product.setName(request.getName());
         if(request.getPrice() != null) product.setPrice(request.getPrice());
         productRepository.saveAndFlush(product);
@@ -49,9 +48,12 @@ public class ProductService {
                 .price(product.getPrice()).build()
         ).toList();
     }
-    public ProductResponse get(Long id){
-        Product product = productRepository.findById(id)
+    public Product getEntity(Long id){
+        return productRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException(String.format("Product with id %d not found",id)));
+    }
+    public ProductResponse get(Long id){
+        Product product = this.getEntity(id);
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
